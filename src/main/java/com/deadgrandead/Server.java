@@ -16,10 +16,16 @@ import java.util.concurrent.Executors;
 class Server {
     private final List<String> validPaths = List.of("/index.html", "/spring.svg", "/spring.png", "/resources.html",
             "/styles.css", "/app.js", "/links.html", "/forms.html", "/classic.html", "/events.html", "/events.js");
-    private final ExecutorService threadPool = Executors.newFixedThreadPool(64);
+    private final ExecutorService threadPool;
+    private final int port;
+
+    public Server(int threads, int port) {
+        this.threadPool = Executors.newFixedThreadPool(threads);
+        this.port = port;
+    }
 
     public void start() {
-        try (final var serverSocket = new ServerSocket(9999)) {
+        try (final var serverSocket = new ServerSocket(this.port)) {
             while (true) {
                 final var socket = serverSocket.accept();
                 threadPool.submit(() -> handleConnection(socket));
